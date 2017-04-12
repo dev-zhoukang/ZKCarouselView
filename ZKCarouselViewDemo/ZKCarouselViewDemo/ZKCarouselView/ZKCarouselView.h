@@ -12,7 +12,7 @@
 
 @interface ZKCarouselView : UIView
 
-+ (instancetype)headerWithImageUrls:(NSArray <NSString *> *)imageUrls;
++ (instancetype)carouselWithImageUrls:(NSArray <NSString *> *)imageUrls;
 
 @end
 

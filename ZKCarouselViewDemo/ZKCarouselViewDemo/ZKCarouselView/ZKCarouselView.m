@@ -9,6 +9,8 @@
 #import "ZKCarouselView.h"
 #import "ZKGlobalHeader.h"
 #import <objc/runtime.h>
+#import "UIImageView+WebCache.h"
+#import "UIImage+Common.h"
 
 @interface ZKCarouselView() <UICollectionViewDelegate, UICollectionViewDataSource>
 
@@ -150,7 +152,7 @@ static NSString *const kCellIdentifier = @"ZKCarouselViewCell";
  */
 
 #pragma mark - Public
-+ (instancetype)headerWithImageUrls:(NSArray<NSString *> *)imageUrls
++ (instancetype)carouselWithImageUrls:(NSArray<NSString *> *)imageUrls
 {
     ZKCarouselView *header = [[ZKCarouselView alloc] init];
     header.backgroundColor = [UIColor clearColor];
@@ -174,7 +176,7 @@ static NSString *const kCellIdentifier = @"ZKCarouselViewCell";
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath
 {
     ZKCarouselViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:kCellIdentifier forIndexPath:indexPath];
-//    cell.imageUrl = [_imageUrls[indexPath.row] fullImageURL];
+    cell.imageUrl = _imageUrls[indexPath.row];
     
     return cell;
 }
@@ -232,7 +234,8 @@ static NSString *const kCellIdentifier = @"ZKCarouselViewCell";
 {
     _imageUrl = imageUrl;
     
-//    [_showImageView setImageWithURL:imageUrl placeholderImage:[UIImage imageNamed:@"loan_hispital_default"]];
+    [_showImageView sd_setImageWithURL:[NSURL URLWithString:imageUrl]
+                      placeholderImage:[UIImage imageWithColor:HexColor(0x666666)]];
 }
 
 @end
