@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		5872D9121E9F106100144486 /* ZKTimer.m in Sources */ = {isa = PBXBuildFile; fileRef = 5872D9111E9F106100144486 /* ZKTimer.m */; };
 		58883C481E9DD8E0005A332B /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 58883C471E9DD8E0005A332B /* main.m */; };
 		58883C4B1E9DD8E0005A332B /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 58883C4A1E9DD8E0005A332B /* AppDelegate.m */; };
 		58883C4E1E9DD8E0005A332B /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 58883C4D1E9DD8E0005A332B /* ViewController.m */; };
@@ -71,6 +72,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		5872D9101E9F106100144486 /* ZKTimer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZKTimer.h; sourceTree = "<group>"; };
+		5872D9111E9F106100144486 /* ZKTimer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZKTimer.m; sourceTree = "<group>"; };
 		58883C431E9DD8E0005A332B /* ZKCarouselViewDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ZKCarouselViewDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		58883C471E9DD8E0005A332B /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		58883C491E9DD8E0005A332B /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -269,6 +272,8 @@
 		58883C7E1E9DF4AD005A332B /* support */ = {
 			isa = PBXGroup;
 			children = (
+				5872D9101E9F106100144486 /* ZKTimer.h */,
+				5872D9111E9F106100144486 /* ZKTimer.m */,
 				58883CCE1E9E41EF005A332B /* UIImage+Common.h */,
 				58883CCF1E9E41EF005A332B /* UIImage+Common.m */,
 				58883C7F1E9DF4AD005A332B /* UIView+Addition.h */,
@@ -530,6 +535,7 @@
 				58883CC01E9DF6F4005A332B /* UIView+WebCache.m in Sources */,
 				58883CB31E9DF6F4005A332B /* SDImageCacheConfig.m in Sources */,
 				58883CD01E9E41EF005A332B /* UIImage+Common.m in Sources */,
+				5872D9121E9F106100144486 /* ZKTimer.m in Sources */,
 				58883CF51E9E4331005A332B /* View+MASAdditions.m in Sources */,
 				58883CB41E9DF6F4005A332B /* SDWebImageCompat.m in Sources */,
 				58883CBD1E9DF6F4005A332B /* UIImage+WebP.m in Sources */,

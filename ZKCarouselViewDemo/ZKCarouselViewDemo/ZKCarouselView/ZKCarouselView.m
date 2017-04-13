@@ -11,12 +11,17 @@
 #import <objc/runtime.h>
 #import "UIImageView+WebCache.h"
 #import "UIImage+Common.h"
+#import "Masonry.h"
+#import "ZKTimer.h"
+#import "SDImageCache.h"
+#import "SDWebImagePrefetcher.h"
 
 @interface ZKCarouselView() <UICollectionViewDelegate, UICollectionViewDataSource>
 
 @property (nonatomic, strong) NSArray <NSString *> *imageUrls;
 @property (nonatomic, strong) UICollectionView *collectionView;
 @property (nonatomic, strong) UIPageControl    *pageControl;
+@property (nonatomic, strong) ZKTimer *timer;
 
 @end
 
@@ -35,8 +40,10 @@ static NSString *const kCellIdentifier = @"ZKCarouselViewCell";
 
 - (void)setup
 {
+    self.backgroundColor = [UIColor greenColor];
     [self setupCollectionView];
     [self setupPageControl];
+    _timer = [ZKTimer timerWithTimeInterval:2 target:self selector:@selector(handleTimer) repeats:true];
 }
 
 - (void)setupCollectionView
@@ -55,6 +62,9 @@ static NSString *const kCellIdentifier = @"ZKCarouselViewCell";
     _collectionView.delegate = self;
     _collectionView.dataSource = self;
     _collectionView.showsHorizontalScrollIndicator = NO;
+    [_collectionView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.edges.mas_equalTo(UIEdgeInsetsZero);
+    }];
     
     [_collectionView registerClass:[ZKCarouselViewCell class] forCellWithReuseIdentifier:kCellIdentifier];
 }
@@ -67,6 +77,11 @@ static NSString *const kCellIdentifier = @"ZKCarouselViewCell";
     _pageControl.pageIndicatorTintColor = HexColor(0x7A7A7A);
     _pageControl.hidesForSinglePage = YES;
     [self insertSubview:_pageControl aboveSubview:_collectionView];
+    [_pageControl mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.size.mas_equalTo(CGSizeMake(100, 30));
+        make.bottom.mas_equalTo(-10);
+        make.centerX.mas_equalTo(self.mas_centerX);
+    }];
     
     if ([self whetherSetValueSafelyForPageControl]) { // 防止访问不存在的私有属性引起crash
         [_pageControl setValue:[UIImage imageNamed:@"page_dot_normal"] forKeyPath:@"_pageImage"];
@@ -96,60 +111,48 @@ static NSString *const kCellIdentifier = @"ZKCarouselViewCell";
     return setValueSafelyForPageControl;
 }
 
-- (void)layoutSubviews {
-    [super layoutSubviews];
-    _collectionView.frame = self.bounds;
-    
-    _pageControl.us_size = (CGSize){100, 30};
-    _pageControl.us_bottom = CGRectGetHeight(self.frame) - 10;
-    _pageControl.us_centerY = self.us_centerY;
-}
-
-/**
 - (BOOL)imageExits:(NSInteger)item
 {
-    NSString *ulrStr = [_imageUrls[item] fullImageURL];
-    NSString *imagePath = [UIImage diskCachePathWithURL:ulrStr];
-    return [[NSFileManager defaultManager] fileExistsAtPath:imagePath];
+    NSString *urlStr = _imageUrls[item];
+    SDImageCache *imageCache = [SDImageCache sharedImageCache];
+    BOOL imageExits = !![imageCache imageFromCacheForKey:urlStr];
+    return imageExits;
 }
 
- #pragma mark - 轮播
- - (void)handleTimer
- {
- DLOG(@"===定时器===");
- 
- NSIndexPath *currentIndexPath = [_collectionView indexPathsForVisibleItems].lastObject;
- NSInteger next = currentIndexPath.item + 1;
- 
- BOOL currentImageExists = [self imageExits:currentIndexPath.item];
- 
- BOOL nextImageExists = YES;
- if (next < _imageUrls.count) {
- nextImageExists = [self imageExits:next];
- }
- 
- if (!currentImageExists || !nextImageExists) return;
- 
- NSIndexPath *currentIndexPathReset = [NSIndexPath indexPathForItem:currentIndexPath.item
- inSection:kSectionCount*0.5];
- [_collectionView scrollToItemAtIndexPath:currentIndexPathReset
- atScrollPosition:UICollectionViewScrollPositionLeft
- animated:NO];
- 
- NSInteger nextItem = currentIndexPathReset.item + 1;
- NSInteger nextSection = currentIndexPathReset.section;
- if (nextItem == _imageUrls.count) {
- nextItem = 0;
- nextSection ++;
- }
- 
- NSIndexPath *nextIndexPath = [NSIndexPath indexPathForItem:nextItem
- inSection:nextSection];
- [_collectionView scrollToItemAtIndexPath:nextIndexPath
- atScrollPosition:UICollectionViewScrollPositionLeft
- animated:YES];
- }
- */
+#pragma mark - 轮播
+- (void)handleTimer {
+    
+    NSIndexPath *currentIndexPath = [_collectionView indexPathsForVisibleItems].lastObject;
+    NSInteger next = currentIndexPath.item + 1;
+    
+     BOOL currentImageExists = [self imageExits:currentIndexPath.item];
+    
+     BOOL nextImageExists = YES;
+     if (next < _imageUrls.count) {
+         nextImageExists = [self imageExits:next];
+     }
+    
+     if (!currentImageExists || !nextImageExists) return;
+    
+    NSIndexPath *currentIndexPathReset = [NSIndexPath indexPathForItem:currentIndexPath.item
+                                                             inSection:kSectionCount*0.5];
+    [_collectionView scrollToItemAtIndexPath:currentIndexPathReset
+                            atScrollPosition:UICollectionViewScrollPositionLeft
+                                    animated:NO];
+    
+    NSInteger nextItem = currentIndexPathReset.item + 1;
+    NSInteger nextSection = currentIndexPathReset.section;
+    if (nextItem == _imageUrls.count) {
+        nextItem = 0;
+        nextSection ++;
+    }
+    
+    NSIndexPath *nextIndexPath = [NSIndexPath indexPathForItem:nextItem
+                                                     inSection:nextSection];
+    [_collectionView scrollToItemAtIndexPath:nextIndexPath
+                            atScrollPosition:UICollectionViewScrollPositionLeft
+                                    animated:YES];
+}
 
 #pragma mark - Public
 + (instancetype)carouselWithImageUrls:(NSArray<NSString *> *)imageUrls
@@ -192,6 +195,8 @@ static NSString *const kCellIdentifier = @"ZKCarouselViewCell";
     _pageControl.currentPage = page;
 }
 
+
+
 @end
 
 ///////////////////////////////////
@@ -214,7 +219,7 @@ static NSString *const kCellIdentifier = @"ZKCarouselViewCell";
 
 - (void)setup
 {
-    self.contentView.backgroundColor = [UIColor clearColor];
+    self.contentView.backgroundColor = [UIColor yellowColor];
     
     _showImageView = [[UIImageView alloc] init];
     _showImageView.clipsToBounds = YES;
@@ -235,7 +240,7 @@ static NSString *const kCellIdentifier = @"ZKCarouselViewCell";
     _imageUrl = imageUrl;
     
     [_showImageView sd_setImageWithURL:[NSURL URLWithString:imageUrl]
-                      placeholderImage:[UIImage imageWithColor:HexColor(0x666666)]];
+                      placeholderImage:[UIImage imageWithColor:HexColor(0xbbbbbb)]];
 }
 
 @end

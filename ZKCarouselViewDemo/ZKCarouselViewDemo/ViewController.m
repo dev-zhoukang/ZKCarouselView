@@ -28,7 +28,6 @@
                            ];
     ZKCarouselView *carousel = [ZKCarouselView carouselWithImageUrls:imageUrls];
     [self.view addSubview:carousel];
-    carousel.backgroundColor = [UIColor redColor];
     [carousel mas_makeConstraints:^(MASConstraintMaker *make) {
         make.top.mas_equalTo(200);
         make.size.mas_equalTo(CGSizeMake(SCREEN_WIDTH, 200));
