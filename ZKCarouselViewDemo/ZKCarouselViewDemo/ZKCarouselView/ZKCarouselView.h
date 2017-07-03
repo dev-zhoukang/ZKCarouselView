@@ -20,7 +20,7 @@
 
 @interface ZKCarouselViewCell : UICollectionViewCell
 
-#define CellSize    CGSizeMake(SCREEN_WIDTH , ceil(200*WindowZoomScale))
+#define CellSize    CGSizeMake(SCREEN_WIDTH , 200)
 
 @property (nonatomic, copy) NSString *imageUrl;
 

@@ -8,7 +8,6 @@
 
 #import "ViewController.h"
 #import "ZKCarouselView.h"
-#import "Masonry.h"
 #import "ZKGlobalHeader.h"
 
 @interface ViewController ()
@@ -27,11 +26,9 @@
                            @"https://devel-10041765.file.myqcloud.com/admin/images/1aa687bd-0460-4aa4-9873-d0049782478f.jpg"
                            ];
     ZKCarouselView *carousel = [ZKCarouselView carouselWithImageUrls:imageUrls];
+    carousel.frame = CGRectMake(0, 100, SCREEN_WIDTH, 200);
     [self.view addSubview:carousel];
-    [carousel mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.mas_equalTo(200);
-        make.size.mas_equalTo(CGSizeMake(SCREEN_WIDTH, 200));
-    }];
+    carousel.backgroundColor = [UIColor redColor];
 }
 
 @end
